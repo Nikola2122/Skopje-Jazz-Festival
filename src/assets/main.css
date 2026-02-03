@@ -1,0 +1,23 @@
+:root {
+  --bg-main: #1a1a1a;
+  --bg-secondary: #242424;
+  --accent: #c89b3c;
+  --text-main: #ffffff;
+  --text-muted: #b5b5b5;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+router-view {
+  flex: 1;
+}

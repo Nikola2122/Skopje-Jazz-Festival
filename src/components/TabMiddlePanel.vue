@@ -1,5 +1,6 @@
 <template>
   <section class="middle-panel">
+    <LogOut />
     <div class="tabs">
       <button
           :class="{ active: activeTab === 'artists' }"
@@ -26,6 +27,7 @@
 import { ref } from 'vue'
 import ArtistsTab from '@/components/ArtistsTab.vue'
 import EventsTab from '@/components/EventsTab.vue'
+import LogOut from "@/components/LogOut.vue";
 
 const activeTab = ref('artists')
 </script>

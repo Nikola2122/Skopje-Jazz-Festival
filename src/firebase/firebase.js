@@ -2,10 +2,10 @@ import { initializeApp } from "firebase/app"
 import { getAuth } from "firebase/auth"
 
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    apiKey: 'AIzaSyAkgz9sPVz_pLZZe70pLMD_-6fYzLQSWZQ',
+    authDomain: 'skopje-jazz-fest.firebaseapp.com',
+    projectId: 'skopje-jazz-fest',
+    appId: '1:87820059798:web:f8f93cda6e26c60ed6eeb7',
 }
 
 const app = initializeApp(firebaseConfig)

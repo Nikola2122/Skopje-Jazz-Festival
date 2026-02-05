@@ -45,7 +45,6 @@ const events = [
       );
 }
 
-/* soft divider from hero */
 .preview-events::before {
   content: "";
   position: absolute;
@@ -86,7 +85,6 @@ const events = [
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
-/* stagger animation */
 .events-grid > * {
   opacity: 0;
   animation: fadeUp 0.6s ease forwards;
@@ -97,12 +95,10 @@ const events = [
 .events-grid > *:nth-child(3) { animation-delay: 0.25s }
 .events-grid > *:nth-child(4) { animation-delay: 0.35s }
 
-/* card glow without touching EventCard */
 .events-grid > *:hover {
   filter: drop-shadow(0 0 12px rgba(255, 200, 80, 0.15));
 }
 
-/* animation */
 @keyframes fadeUp {
   from {
     opacity: 0;

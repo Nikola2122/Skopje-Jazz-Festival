@@ -57,7 +57,7 @@ li {
   position: relative;
 }
 
-/* LINKS */
+
 a {
   text-decoration: none;
   color: var(--text-muted);
@@ -66,7 +66,6 @@ a {
   transition: color 0.25s ease;
 }
 
-/* UNDERLINE ANIMATION */
 a::after {
   content: "";
   position: absolute;
@@ -86,7 +85,6 @@ a:hover::after {
   width: 100%;
 }
 
-/* ACTIVE ROUTE */
 a.router-link-active {
   color: var(--accent);
 }
@@ -95,7 +93,6 @@ a.router-link-active::after {
   width: 100%;
 }
 
-/* ADMIN PANEL – slightly emphasized */
 .admin a {
   color: var(--accent);
 }
@@ -104,7 +101,6 @@ a.router-link-active::after {
   background: var(--accent);
 }
 
-/* SMALL INTERACTION POLISH */
 li:hover {
   transform: translateY(-1px);
   transition: transform 0.2s ease;

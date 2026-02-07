@@ -1,37 +1,36 @@
+<template>
+    <button class="logout-btn" @click="logout">Log Out</button>
+</template>
+
 <script setup>
-import { getAuth, signOut } from "firebase/auth"
-import { useRouter } from "vue-router"
-
-const auth = getAuth()
-const router = useRouter()
-
-const logout = async () => {
-  try {
-    await signOut(auth)
-    router.push("/login") // or wherever you want
-  } catch (error) {
-    console.error("Logout error:", error)
-  }
+const logout = () => {
+    // your logout logic here
+    console.log('Logging out...')
 }
 </script>
 
-<template>
-  <button @click="logout" class="logout-btn">
-    Log out
-  </button>
-</template>
-
 <style scoped>
 .logout-btn {
-  padding: 8px 14px;
-  background: #e53935;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+    padding: 10px 24px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #ff4d4f, #ff1a1a);
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 77, 79, 0.4);
+    transition: all 0.2s ease;
 }
 
 .logout-btn:hover {
-  background: #c62828;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 77, 79, 0.5);
+    background: linear-gradient(135deg, #ff1a1a, #ff4d4f);
+}
+
+.logout-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(255, 77, 79, 0.4);
 }
 </style>

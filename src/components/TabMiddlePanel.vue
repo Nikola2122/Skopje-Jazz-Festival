@@ -1,26 +1,36 @@
 <template>
-  <section class="middle-panel">
-    <LogOut />
-    <div class="tabs">
-      <button
-          :class="{ active: activeTab === 'artists' }"
-          @click="activeTab = 'artists'"
-      >
-        Artists
-      </button>
-      <button
-          :class="{ active: activeTab === 'events' }"
-          @click="activeTab = 'events'"
-      >
-        Events
-      </button>
-    </div>
+    <section class="middle-panel">
+        <!-- Header -->
+        <div class="panel-header">
+            <div class="header-text">
+                <h1>Welcome to Your Dashboard</h1>
+                <p class="subtitle">Manage events and artists efficiently</p>
+            </div>
+            <LogOut/>
+        </div>
 
-    <div class="tab-content">
-      <ArtistsTab v-if="activeTab === 'artists'" />
-      <EventsTab v-if="activeTab === 'events'" />
-    </div>
-  </section>
+        <!-- Tabs -->
+        <div class="tabs">
+            <button
+                :class="{ active: activeTab === 'artists' }"
+                @click="activeTab = 'artists'"
+            >
+                Artists
+            </button>
+            <button
+                :class="{ active: activeTab === 'events' }"
+                @click="activeTab = 'events'"
+            >
+                Events
+            </button>
+        </div>
+
+        <!-- Tab content -->
+        <div class="tab-content">
+            <ArtistsTab v-if="activeTab === 'artists'"/>
+            <EventsTab v-if="activeTab === 'events'"/>
+        </div>
+    </section>
 </template>
 
 <script setup>
@@ -34,41 +44,66 @@ const activeTab = ref('artists')
 
 <style scoped>
 .middle-panel {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 40px 20px;
-  background: linear-gradient(145deg, var(--bg-secondary), rgba(255,255,255,0.02));
-  border-radius: 18px;
-  box-shadow: 0 12px 36px rgba(0,0,0,0.25);
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 40px 30px;
+    background: linear-gradient(145deg, var(--bg-secondary), rgba(255, 255, 255, 0.02));
+    border-radius: 18px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
 }
 
+/* HEADER */
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-text h1 {
+    font-size: 28px;
+    color: var(--accent);
+    margin: 0;
+}
+
+.header-text .subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* TABS */
 .tabs {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  margin-bottom: 36px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 20px;
 }
 
 .tabs button {
-  padding: 12px 28px;
-  border-radius: 999px;
-  border: 1px solid var(--accent);
-  background: transparent;
-  color: var(--accent);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+    padding: 12px 28px;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .tabs button.active {
-  background: var(--accent);
-  color: var(--bg-main);
-  box-shadow: 0 6px 18px rgba(255,200,80,0.3);
+    background: var(--accent);
+    color: var(--bg-main);
+    box-shadow: 0 6px 18px rgba(255, 200, 80, 0.3);
 }
 
+/* TAB CONTENT */
 .tab-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 </style>

@@ -1,79 +1,100 @@
 <template>
-  <section class="program">
-    <header class="program-header">
-      <h2>Festival Program</h2>
-      <p>Explore the full schedule of performances and events</p>
-    </header>
+    <section class="program">
+        <header class="program-header">
+            <h2>Festival Program</h2>
+            <p>Explore the full schedule of performances and events</p>
+        </header>
 
-    <div class="events-grid">
-      <EventCard
-          v-for="event in events"
-          :key="event.id"
-          :event="event"
-      />
-    </div>
-  </section>
+        <Loading v-if="eventsStore.events.length === 0" />
+        <div v-if="eventsStore.events.length !== 0" class="events-grid">
+            <EventCard
+                v-for="event in eventsStore.events
+                        .slice()
+                         .sort((a, b) => {
+                            const parseDate = (str) => {
+                            const [day, month, year] = str.split('/').map(Number)
+                            return new Date(year, month - 1, day)
+                         }
+                            return parseDate(b.Date) - parseDate(a.Date)
+                         })"
+                :key="event.id"
+                :Event="event"
+            />
+        </div>
+    </section>
 </template>
 
 <script setup>
 import EventCard from '@/components/EventCard.vue'
+import {useEventsStore} from "@/pinia/events.js";
+import {onMounted} from "vue";
+import Loading from "@/components/Loading.vue";
+const eventsStore = useEventsStore();
 
-const events = [
-  { id: 1, title: 'Opening Night', date: '12 Oct', location: 'Main Hall' },
-  { id: 2, title: 'Jazz Trio Live', date: '13 Oct', location: 'Stage A' },
-  { id: 3, title: 'Saxophone Night', date: '14 Oct', location: 'Stage B' }
-]
+onMounted(() => {
+    if (eventsStore.events.length === 0) {
+        eventsStore.fetchEvents()
+    }
+    console.log(eventsStore.events);
+})
 </script>
 
 <style scoped>
 .program {
-  flex: 1;
-  padding: 80px 40px;
-  background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.1),
-      transparent
-  );
+    flex: 1;
+    padding: 80px 40px;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.1),
+        transparent
+    );
 }
 
 .program-header {
-  text-align: center;
-  margin-bottom: 50px;
+    text-align: center;
+    margin-bottom: 50px;
 }
 
 .program-header h2 {
-  font-size: 36px;
-  color: var(--accent);
-  margin-bottom: 10px;
-  letter-spacing: 1px;
+    font-size: 36px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
 }
 
 .program-header p {
-  color: var(--text-muted);
-  font-size: 15px;
-  max-width: 560px;
-  margin: 0 auto;
+    color: var(--text-muted);
+    font-size: 15px;
+    max-width: 560px;
+    margin: 0 auto;
 }
 
 .events-grid {
-  display: grid;
-  gap: 26px;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    display: grid;
+    gap: 26px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.events-grid {
+    display: grid;
+    gap: 26px;
+    grid-template-columns: repeat(4, 1fr);
 }
 
 /* subtle entrance animation */
 .events-grid > * {
-  animation: fadeUp 0.4s ease forwards;
+    animation: fadeUp 0.4s ease forwards;
 }
 
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
 </style>

@@ -4,7 +4,7 @@ import TabMiddlePanel from "@/components/TabMiddlePanel.vue";
 </script>
 
 <template>
-  <TabMiddlePanel />
+    <TabMiddlePanel/>
 </template>
 
 <style scoped>

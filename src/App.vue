@@ -1,11 +1,11 @@
 <template>
-  <div id="wrapper">
-    <Navbar/>
-    <Main class="content">
-      <router-view/>
-    </Main>
-    <Footer/>
-  </div>
+    <div id="wrapper">
+        <Navbar/>
+        <Main class="content">
+            <router-view/>
+        </Main>
+        <Footer/>
+    </div>
 </template>
 
 <script setup>
@@ -15,12 +15,12 @@ import Footer from "@/components/Footer.vue";
 
 <style>
 #wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .content {
-  flex: 1;
+    flex: 1;
 }
 </style>

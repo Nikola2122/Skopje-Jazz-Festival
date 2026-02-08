@@ -1,9 +1,9 @@
-import {collection, getDocs, query} from 'firebase/firestore'
+import {collection, getDocs, query, addDoc} from 'firebase/firestore'
 import {db} from '@/firebase/firebase'
 
-export async function fetchEventsFromDb() {
+export async function fetchFromDb(coll) {
     const q = query(
-        collection(db, 'Events')
+        collection(db, coll)
     )
 
     const snapshot = await getDocs(q)
@@ -14,14 +14,15 @@ export async function fetchEventsFromDb() {
     }))
 }
 
-export async function fetchArtistsFromDb() {
-    const q = query(
-        collection(db, 'Artists')
-    )
-    const snapshot = await getDocs(q)
-    console.log(snapshot)
-    return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }))
+
+export async function addToDb(coll, doc) {
+    try {
+        let resp = await addDoc(collection(db, coll),
+            doc
+        )
+        console.log(resp)
+    }
+    catch (err) {
+        console.error(err)
+    }
 }

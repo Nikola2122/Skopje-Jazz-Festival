@@ -6,7 +6,13 @@
                 <h1>Welcome to Your Dashboard</h1>
                 <p class="subtitle">Manage events and artists efficiently</p>
             </div>
-            <LogOut/>
+
+            <div class="header-actions">
+                <button @click="goToAdd" class="add-btn">
+                    + Add {{ activeTab === 'artists' ? 'Artist' : 'Event' }}
+                </button>
+                <LogOut />
+            </div>
         </div>
 
         <!-- Tabs -->
@@ -38,8 +44,23 @@ import { ref } from 'vue'
 import ArtistsTab from '@/components/ArtistsTab.vue'
 import EventsTab from '@/components/EventsTab.vue'
 import LogOut from "@/components/LogOut.vue";
+import {useRouter} from "vue-router";
 
-const activeTab = ref('artists')
+const props = defineProps({
+    tab: String
+})
+
+const activeTab = ref(props.tab)
+const router = useRouter()
+
+const goToAdd = () => {
+    if (activeTab.value === 'artists') {
+        router.push('/add/artist')
+    }
+    else{
+        router.push('/add/event')
+    }
+}
 </script>
 
 <style scoped>
@@ -90,6 +111,7 @@ const activeTab = ref('artists')
     background: transparent;
     color: var(--accent);
     font-weight: 600;
+    font-size: 15px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -105,5 +127,40 @@ const activeTab = ref('artists')
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+/* HEADER ACTIONS */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* ADD BUTTON */
+.add-btn {
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(
+        145deg,
+        var(--accent),
+        rgba(255, 200, 80, 0.85)
+    );
+    color: var(--bg-main);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(255, 200, 80, 0.35);
+    transition: all 0.2s ease;
+}
+
+.add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(255, 200, 80, 0.45);
+}
+
+.add-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 16px rgba(255, 200, 80, 0.3);
 }
 </style>

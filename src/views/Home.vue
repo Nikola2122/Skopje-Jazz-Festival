@@ -3,7 +3,7 @@
 
     <section class="preview-events">
         <div class="header">
-            <h2>Upcoming Events</h2>
+            <h2>Closest 3 Upcoming Events</h2>
             <p>Experience the best moments of this year’s jazz festival</p>
         </div>
 
@@ -11,7 +11,7 @@
         <div v-if="eventsStore.events.length !== 0" class="events-grid">
             <EventCard
                 v-for="event in eventsStore.events
-                        .slice(0,3)
+                        .slice(eventsStore.events.length-3,eventsStore.events.length)
                          .sort((a, b) => {
                             const parseDate = (str) => {
                             const [day, month, year] = str.split('/').map(Number)

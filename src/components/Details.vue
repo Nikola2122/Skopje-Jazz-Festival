@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, onUnmounted} from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 defineProps({
     Event: {
@@ -43,6 +43,11 @@ onUnmounted(() => {
                     <div class="info">
                         <p><strong>Date:</strong> {{ Event.Date }}</p>
                         <p><strong>Location:</strong> {{ Event.Location }}</p>
+
+                        <!-- Ticket Price -->
+                        <div class="ticket">
+                            Ticket price: € {{ Event.TicketPrice }}
+                        </div>
                     </div>
 
                     <p class="demo-text">
@@ -52,9 +57,13 @@ onUnmounted(() => {
                     <div class="grid-item artists">
                         <span class="label">Artists</span>
                         <span class="value">
-                         <span class="artist" v-for="(artist, index) in Event.Artists" :key="index">
-                          {{ artist }}
-                         </span>
+                            <span
+                                class="artist"
+                                v-for="(artist, index) in Event.Artists"
+                                :key="index"
+                            >
+                                {{ artist }}
+                            </span>
                         </span>
                     </div>
 
@@ -105,22 +114,66 @@ onUnmounted(() => {
     color: var(--accent);
 }
 
-/* Text */
+/* Title */
 h2 {
     margin: 0 0 10px;
     color: var(--accent);
 }
 
+/* Info block */
 .info {
     font-size: 14px;
     color: var(--text-muted);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
+/* Ticket price */
+.ticket {
+    margin-top: 6px;
+    align-self: flex-start;
+    background: rgba(255, 200, 80, 0.15);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+/* Description */
 .demo-text {
     font-size: 14px;
     color: var(--text-main);
     line-height: 1.5;
+    margin-bottom: 14px;
+}
+
+/* Artists */
+.label {
+    font-size: 12px;
+    color: var(--text-muted, #aaa);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.value {
+    font-size: 15px;
+    color: var(--text, #fff);
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.artists .artist {
+    background: rgba(255, 200, 80, 0.15);
+    color: #ffc850;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 13px;
 }
 
 /* Close button */
@@ -141,6 +194,7 @@ h2 {
     color: var(--bg-main);
 }
 
+/* Transitions */
 .modal-enter-active,
 .modal-leave-active {
     transition: all 0.25s ease;
@@ -151,35 +205,4 @@ h2 {
     opacity: 0;
     transform: scale(0.9);
 }
-
-.label {
-    font-size: 12px;
-    color: var(--text-muted, #aaa);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.value {
-    font-size: 15px;
-    color: var(--text, #fff);
-    margin-top: 2px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-}
-
-.artists {
-    grid-area: artists;
-}
-
-.artists .artist {
-    background: rgba(255, 200, 80, 0.15);
-    color: #ffc850;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 13px;
-}
-
-
 </style>

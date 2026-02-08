@@ -3,9 +3,18 @@
 </template>
 
 <script setup>
-const logout = () => {
-    // your logout logic here
-    console.log('Logging out...')
+import {signOut} from 'firebase/auth'
+import {auth} from '@/firebase/firebase.js'
+import {useRouter} from "vue-router"
+
+const router = useRouter()
+const logout = async () => {
+    try {
+        await signOut(auth)
+        router.push('/login')
+    }catch(error) {
+        console.log(error)
+    }
 }
 </script>
 

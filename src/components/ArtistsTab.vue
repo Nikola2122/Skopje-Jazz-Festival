@@ -15,8 +15,8 @@ const artistsStore = useArtistsStore();
 
 onMounted(() => {
     if (artistsStore.artists.length === 0) {
-        artistsStore.fetchArtists();
+        artistsStore.fetchArtists()
     }
-    console.log(artistsStore.artists);
+    console.log(artistsStore.artists)
 })
 </script>

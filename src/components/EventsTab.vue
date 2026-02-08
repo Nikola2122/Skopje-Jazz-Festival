@@ -1,6 +1,8 @@
 <template>
+    <Loading v-if="eventsStore.events.length === 0"/>
     <div class="events-tab">
         <EACard
+            v-if="eventsStore.events.length !== 0"
             v-for="event in eventsStore.events"
             :key="event.id"
             :Event="event"
@@ -12,6 +14,7 @@
 import {onMounted} from "vue";
 import {useEventsStore} from "@/pinia/events.js";
 import EACard from "@/components/EACard.vue";
+import Loading from "@/components/Loading.vue";
 
 const eventsStore = useEventsStore();
 

@@ -7,6 +7,8 @@ import LoginPage from "@/views/LoginPage.vue";
 import {auth} from "@/firebase/firebase.js";
 import {onAuthStateChanged} from 'firebase/auth'
 import AdminPanel from "@/views/AdminPanel.vue";
+import AddArtist from "@/views/AddArtist.vue";
+import AddEvent from "@/views/AddEvent.vue";
 
 const routes = [
     {
@@ -33,7 +35,16 @@ const routes = [
     },
     {   path: '/admin',
         name: 'AdminPanel',
-        component: AdminPanel
+        component: AdminPanel,
+        props: true
+    },
+    {   path: '/add/artist',
+        name: 'AddArtist',
+        component: AddArtist,
+    },
+    {   path: '/add/event',
+        name: 'AddEvent',
+        component: AddEvent,
     }
 ]
 
@@ -46,7 +57,7 @@ router.beforeEach((to, from, next) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
         unsubscribe()
 
-        if (to.path === '/admin') {
+        if (to.path === '/admin' || to.path === '/add/artist' || to.path ==='/add/event') {
             if (user) next()
             else next('/login')
         }

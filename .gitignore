@@ -38,3 +38,9 @@ __screenshots__/
 # Vite
 *.timestamp-*-*.mjs
 .env
+
+#serviceAccountKey
+scripts/serviceAccountKey.json
+
+.vs/
+functions/node_modules/

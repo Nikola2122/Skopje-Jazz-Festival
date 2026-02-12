@@ -1,4 +1,4 @@
-import {collection, getDocs, query, addDoc} from 'firebase/firestore'
+import {collection, getDocs, query, addDoc, setDoc, doc, getDoc} from 'firebase/firestore'
 import {db} from '@/firebase/firebase'
 
 export async function fetchFromDb(coll) {
@@ -21,8 +21,34 @@ export async function addToDb(coll, doc) {
             doc
         )
         console.log(resp)
-    }
-    catch (err) {
+    } catch (err) {
         console.error(err)
     }
+}
+
+export async function addUserToDb(userId) {
+    let resp = await setDoc(doc(db, "Users", userId), {
+        Role: "user",
+        createdAt: new Date()
+    });
+    console.log(resp)
+}
+
+const getUserById = async (uid) => {
+    const docRef = doc(db, "Users", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() };
+    } else {
+        console.log("No user found with that ID");
+        return null;
+    }
+};
+
+export async function hasRole(uid, role){
+    const user = await getUserById(uid);
+    console.log(user)
+    if (!user) return false;
+    return user.Role === role;
 }

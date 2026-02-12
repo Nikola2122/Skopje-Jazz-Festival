@@ -7,6 +7,7 @@ export const useEventsStore = defineStore('events', () => {
     async function fetchEvents() {
         try {
             events.value = await fetchFromDb('Events')
+            console.log(events.value)
         } catch (err) {
             console.error(err)
         }

@@ -15,8 +15,11 @@
             <li>
                 <router-link to="/contact">Contact</router-link>
             </li>
+            <li v-if="!currentUser || isAdmin" class="admin">
+                <router-link to="/admin/login">Admin Panel</router-link>
+            </li>
             <li class="admin">
-                <router-link to="/login">Admin Panel</router-link>
+                <router-link to="/user/login">Sign Up & Log In</router-link>
             </li>
         </ul>
     </nav>
@@ -103,3 +106,25 @@ li:hover {
     transition: transform 0.2s ease;
 }
 </style>
+<script setup lang="ts">
+import {auth} from '@/firebase/firebase.js'
+import {hasRole} from '@/firebase/utils/services.js'
+import {onMounted, ref} from "vue";
+
+
+const currentUser = ref(auth.currentUser); // track user
+const isAdmin = ref(false);
+
+onMounted(async () => {
+    auth.onAuthStateChanged(async (user) => {
+        currentUser.value = user;
+
+        if (user) {
+            isAdmin.value = await hasRole(user.uid, 'admin');
+            console.log("Is admin?", isAdmin.value);
+        } else {
+            isAdmin.value = false;
+        }
+    });
+});
+</script>

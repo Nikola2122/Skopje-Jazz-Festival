@@ -144,10 +144,10 @@ const goToLogin = () => {
     filter: drop-shadow(0 0 12px rgba(255, 200, 80, 0.3));
 }
 
-.error {
+.login-card p.error {
     color: red;
-    margin-top: 12px;
 }
+
 
 .signup-link {
     margin-top: 26px;

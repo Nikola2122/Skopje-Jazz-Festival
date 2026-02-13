@@ -11,7 +11,7 @@
                 <button @click="goToAdd" class="add-btn">
                     + Add {{ activeTab === 'artists' ? 'Artist' : 'Event' }}
                 </button>
-                <LogOut />
+                <LogOut toWhere="/admin/login" />
             </div>
         </div>
 

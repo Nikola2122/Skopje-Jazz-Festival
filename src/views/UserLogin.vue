@@ -3,6 +3,9 @@
         <div class="login-card">
             <h2>WELCOME BACK</h2>
             <p>Sign in to your account</p>
+            <p v-if="success" class="success">
+                Your account has been created successfully. You can log in now.
+            </p>
 
             <form @submit.prevent="login">
                 <input v-model="email" type="email" placeholder="Email" />
@@ -34,6 +37,9 @@ import router from "@/router/index.js";
 const email = ref('')
 const password = ref('')
 const error = ref(null)
+defineProps({
+    success: Boolean
+})
 
 const login = async () => {
 
@@ -64,6 +70,19 @@ const goToSignup = () => {
     padding: 40px 20px;
     background: radial-gradient(circle at top, rgba(255, 255, 255, 0.03), transparent 60%),
     linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.18));
+}
+
+.login-card p.success {
+    margin: -10px 0 22px;
+    padding: 12px 14px;
+    border-radius: 10px;
+
+    background: rgba(60, 180, 120, 0.12);
+    border: 1px solid rgba(60, 180, 120, 0.35);
+    color: #3cb478;
+
+    font-size: 14px;
+    line-height: 1.4;
 }
 
 .login-card {

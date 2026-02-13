@@ -7,11 +7,15 @@ import {signOut} from 'firebase/auth'
 import {auth} from '@/firebase/firebase.js'
 import {useRouter} from "vue-router"
 
+const props = defineProps({
+    toWhere: String
+})
+
 const router = useRouter()
 const logout = async () => {
     try {
         await signOut(auth)
-        router.push('/')
+        router.push(props.toWhere)
     }catch(error) {
         console.log(error)
     }

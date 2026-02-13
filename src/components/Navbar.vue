@@ -18,7 +18,7 @@
             <li v-if="!currentUser || isAdmin" class="admin">
                 <router-link to="/admin/login">Admin Panel</router-link>
             </li>
-            <li class="admin">
+            <li v-if="!currentUser" class="admin">
                 <router-link to="/user/login">Sign Up & Log In</router-link>
             </li>
         </ul>

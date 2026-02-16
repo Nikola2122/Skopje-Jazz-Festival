@@ -103,12 +103,14 @@
                 :Event="event"
                 />
 </div>
+      <EventCalendar/>
     </section>
 </template>
 
 <script setup>
 import HeroSection from '@/components/MainSection.vue'
 import EventCard from '@/components/EventCard.vue'
+import EventCalendar from "@/components/EventCalendar.vue";
 import {useEventsStore} from "@/pinia/events.js";
 import {onMounted} from "vue";
 import Loading from "@/components/Loading.vue";

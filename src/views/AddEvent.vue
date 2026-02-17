@@ -152,8 +152,8 @@ const addEvent = async () => {
             TicketPrice: ticketPrice.value,
             Artists: artists.value
         })
-        eventStore.fetchEvents()
-        router.push({
+        await eventStore.fetchEvents()
+        await router.push({
             name: "AdminPanel",
             query: { tab: "events" }
         })

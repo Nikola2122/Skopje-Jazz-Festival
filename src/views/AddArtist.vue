@@ -95,8 +95,8 @@ const addArtist = async () => {
             RoleInstrument: role.value,
             DateOfBirth: rawDate.value
         })
-        artistStore.fetchArtists()
-        router.push({
+        await artistStore.fetchArtists()
+        await router.push({
             name: 'AdminPanel',
             params: {
                 tab: 'artists'

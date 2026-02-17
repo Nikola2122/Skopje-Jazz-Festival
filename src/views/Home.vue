@@ -34,6 +34,7 @@ onMounted(() => {
     }
     console.log(eventsStore.events);
 })
+
 </script>
 
 <style scoped>

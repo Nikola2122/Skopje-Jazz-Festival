@@ -1,4 +1,4 @@
-import {collection, getDocs, query, addDoc, setDoc, doc, getDoc} from 'firebase/firestore'
+import {collection, getDocs, query, addDoc, setDoc, doc, getDoc, updateDoc, arrayUnion, arrayRemove} from 'firebase/firestore'
 import {db} from '@/firebase/firebase'
 
 export async function fetchFromDb(coll) {
@@ -51,4 +51,24 @@ export async function hasRole(uid, role){
     console.log(user)
     if (!user) return false;
     return user.Role === role;
+}
+
+export async function alterInterested(eventId, uid, action) {
+    try {
+        const docRef = doc(db, "Events", eventId);
+        if (action === 'add'){
+            await updateDoc(docRef, {
+                Interested: arrayUnion(uid)
+            });
+        }
+        else{
+            await updateDoc(docRef, {
+                Interested: arrayRemove(uid)
+            });
+        }
+        console.log(`Success`);
+    } catch (err) {
+        console.error("Error updating document:", err);
+        throw err;
+    }
 }

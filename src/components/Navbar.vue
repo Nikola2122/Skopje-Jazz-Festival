@@ -21,6 +21,9 @@
             <li v-if="!currentUser" class="admin">
                 <router-link to="/user/login">Sign Up & Log In</router-link>
             </li>
+            <li v-if="currentUser && !isAdmin" class="admin">
+                <router-link to="/user/events">My Events</router-link>
+            </li>
         </ul>
     </nav>
 </template>
@@ -110,6 +113,7 @@ li:hover {
 import {auth} from '@/firebase/firebase.js'
 import {hasRole} from '@/firebase/utils/services.js'
 import {onMounted, ref} from "vue";
+import LogOut from "@/components/LogOut.vue";
 
 
 const currentUser = ref(auth.currentUser); // track user

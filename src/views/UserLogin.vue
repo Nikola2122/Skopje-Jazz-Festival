@@ -28,17 +28,27 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {auth} from "@/firebase/firebase.js";
-import {signInWithEmailAndPassword} from 'firebase/auth'
+import {signInWithEmailAndPassword, signOut} from 'firebase/auth'
 import router from "@/router/index.js";
+import {useRoute} from "vue-router";
+import {hasRole} from "@/firebase/utils/services.js";
 
 
 const email = ref('')
 const password = ref('')
-const error = ref(null)
-defineProps({
-    success: Boolean
+const localError = ref(null)
+const route = useRoute()
+
+const routeError = computed(() => route.query.error || null)
+
+const error = computed(() => {
+    return routeError.value || localError.value
+})
+
+const success = computed(() => {
+    return useRoute().query.success;
 })
 
 const login = async () => {
@@ -47,12 +57,21 @@ const login = async () => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
         const user = userCredential.user;
+        const isUser = await hasRole(user.uid, 'user');
+        if (!isUser) {
+            await signOut(auth)
+            await router.push({
+                name: 'UserLogin',
+                query: { error: 'Not authorized' }
+            });
+            return;
+        }
         console.log("Logged in as:", user.email);
 
         await router.push("/user/events");
     } catch (err) {
         console.error(err);
-        error.value = err.message;
+        localError.value = err.message;
     }
 }
 
@@ -63,6 +82,7 @@ const goToSignup = () => {
 
 <style scoped>
 .login-page {
+    margin-top: -100px;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -147,6 +167,11 @@ const goToSignup = () => {
 }
 
 .error {
+    color: red;
+    margin-top: 12px;
+}
+
+.login-card p.error {
     color: red;
     margin-top: 12px;
 }

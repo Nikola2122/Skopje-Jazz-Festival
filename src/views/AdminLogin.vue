@@ -17,15 +17,25 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {auth} from "@/firebase/firebase.js";
-import {signInWithEmailAndPassword} from 'firebase/auth'
+import {signInWithEmailAndPassword, signOut} from 'firebase/auth'
 import router from "@/router/index.js";
+import {useRoute} from "vue-router";
+import {hasRole} from "@/firebase/utils/services.js";
 
 
 const email = ref('')
 const password = ref('')
-const error = ref(null)
+const localError = ref('')
+const route = useRoute()
+
+const routeError = computed(() => route.query.error || null)
+
+const error = computed(() => {
+    return routeError.value || localError.value
+})
+
 
 const login = async () => {
 
@@ -33,12 +43,21 @@ const login = async () => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
         const user = userCredential.user;
+        const isAdmin = await hasRole(user.uid, 'admin');
+        if (!isAdmin) {
+            await signOut(auth)
+            await router.push({
+                name: 'AdminLogin',
+                query: { error: 'Not authorized' }
+            });
+            return;
+        }
         console.log("Logged in as:", user.email);
 
         await router.push("/admin");
     } catch (err) {
         console.error(err);
-        error.value = err.message;
+        localError.value = err.message;
     }
 }
 
@@ -46,6 +65,7 @@ const login = async () => {
 
 <style scoped>
 .login-page {
+    margin-top: -100px;
     min-height: 100vh;
     display: flex;
     justify-content: center;

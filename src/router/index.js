@@ -11,6 +11,8 @@ import AddArtist from "@/views/AddArtist.vue";
 import AddEvent from "@/views/AddEvent.vue";
 import UserLogin from "@/views/UserLogin.vue";
 import SignUpPage from "@/views/SignUpPage.vue";
+import {hasRole} from "@/firebase/utils/services.js";
+import UserEvents from "@/views/UserEvents.vue";
 
 const routes = [
     {
@@ -32,8 +34,9 @@ const routes = [
         component: About
     },
     {   path: '/admin/login',
-        name: 'LoginPage',
-        component: AdminLogin
+        name: 'AdminLogin',
+        component: AdminLogin,
+        props: true
     },
     {   path: '/admin',
         name: 'AdminPanel',
@@ -51,10 +54,15 @@ const routes = [
     {   path: '/user/login',
         name: 'UserLogin',
         component: UserLogin,
+        props: true
     },
     {   path: '/user/signup',
         name: 'UserSignup',
         component: SignUpPage,
+    },
+    {   path: '/user/events',
+        name: 'UserEvents',
+        component: UserEvents,
     }
 ]
 
@@ -63,22 +71,52 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-        unsubscribe()
+router.beforeEach(async (to, from, next) => {
+    const user = auth.currentUser
 
-        if (to.path === '/admin' || to.path === '/add/artist' || to.path ==='/add/event') {
-            if (user) next()
-            else next('/login')
+    let isAdmin = false
+
+    if (user) {
+        try {
+            isAdmin = await hasRole(user.uid, 'admin')
+        } catch (err) {
+            console.error('Role check failed', err)
         }
-        else if (to.path === '/login') {
-            if (user) next('/admin')
-            else next()
-        }
-        else {
-            next()
-        }
-    })
+    }
+
+    // Admin-only routes
+    if (
+        to.path === '/admin' ||
+        to.path === '/add/artist' ||
+        to.path === '/add/event'
+    ) {
+        if (user && isAdmin) next()
+        else next('/admin/login')
+        return
+    }
+
+    // User-only routes
+    if(to.path === '/user/events') {
+        if (user && !isAdmin) next()
+        else next('/user/login')
+        return
+    }
+
+    // Login pages
+    if (to.path === '/admin/login') {
+        if (user && isAdmin) next('/admin')
+        else next()
+        return
+    }
+
+    if (to.path === '/user/login') {
+        if (user && !isAdmin) next('/user/events')
+        else next()
+        return
+    }
+
+    next()
 })
+
 
 export default router

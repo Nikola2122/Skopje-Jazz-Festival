@@ -28,7 +28,7 @@
 <script setup>
 import {ref} from "vue";
 import {useRouter} from "vue-router";
-import {createUserWithEmailAndPassword} from 'firebase/auth'
+import {createUserWithEmailAndPassword, signOut} from 'firebase/auth'
 import {auth} from "@/firebase/firebase.js";
 import {addUserToDb} from "@/firebase/utils/services.js";
 
@@ -54,7 +54,11 @@ const signup = async () => {
 
         try {
             await addUserToDb(userCredential.user.uid);
-            router.push("/user/login");
+            await signOut(auth);
+            router.push({
+                name: "UserLogin",
+                query: { success: true }
+            })
         } catch (err) {
             console.error(err);
             error.value = err.message || "Could not save user data";
@@ -74,6 +78,7 @@ const goToLogin = () => {
 
 <style scoped>
 .login-page {
+    margin-top: -100px;
     min-height: 100vh;
     display: flex;
     justify-content: center;

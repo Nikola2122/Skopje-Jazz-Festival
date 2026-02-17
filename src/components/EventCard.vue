@@ -2,26 +2,36 @@
     <div class="card">
         <!-- Image -->
         <div class="image-wrapper">
-            <img
-                :src="Event.ImageUrl || fallbackImage"
-                alt="Event image"
-            />
+            <img :src="props.Event.ImageUrl || fallbackImage" alt="Event image" />
         </div>
 
         <div class="card-content">
-            <h3>{{ Event.Name }}</h3>
+            <h3>{{ props.Event.Name }}</h3>
 
             <div class="meta">
-                <span>{{ Event.Date }}</span>
+                <span>{{ props.Event.Date }}</span>
                 <span class="dot">•</span>
-                <span>{{ Event.Location }}</span>
+                <span>{{ props.Event.Location }}</span>
             </div>
         </div>
 
-        <button @click="showModal = true">View details</button>
+        <div class="buttons">
+            <button @click="showModal = true">View details</button>
+
+            <!-- Interested Heart Button -->
+            <button
+                v-if="showInterestedBtn"
+                class="heart-btn"
+                :class="{ interested: isInterested }"
+                @click="toggleInterested"
+            >
+                <span :class="{ filled: isInterested }">❤️</span>
+                Interested
+            </button>
+        </div>
 
         <Details
-            :Event="Event"
+            :Event="props.Event"
             :showModal="showModal"
             @close="showModal = false"
         />
@@ -29,20 +39,62 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import Details from '@/components/Details.vue'
+import { ref, computed, onMounted } from "vue";
+import Details from "@/components/Details.vue";
+import { auth } from "@/firebase/firebase.js";
+import { alterInterested, hasRole } from "@/firebase/utils/services.js";
 
-defineProps({
+const props = defineProps({
     Event: {
         type: Object,
         required: true
     }
-})
+});
 
-const showModal = ref(false)
-
+const showModal = ref(false);
 const fallbackImage =
-    'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=900&q=80'
+    "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=900&q=80";
+
+const currentUser = ref(auth.currentUser);
+const userRole = ref(null);
+
+// Only show Interested button if logged in and role is 'user'
+const showInterestedBtn = computed(() => {
+    return currentUser.value && userRole.value === "user";
+});
+
+// Check if current user's UID is in Event.Interested
+const isInterested = computed(() => {
+    if (!props.Event.Interested || !currentUser.value) return false;
+    return props.Event.Interested.includes(currentUser.value.uid);
+});
+
+// Toggle Interested
+const toggleInterested = async () => {
+    if (!currentUser.value) return;
+
+    const action = isInterested.value ? "remove" : "add";
+    try {
+        await alterInterested(props.Event.id, currentUser.value.uid, action);
+
+        if (!props.Event.Interested) props.Event.Interested = [];
+        if (action === "add") props.Event.Interested.push(currentUser.value.uid);
+        else
+            props.Event.Interested = props.Event.Interested.filter(
+                (uid) => uid !== currentUser.value.uid
+            );
+    } catch (err) {
+        console.error("Failed to update interest:", err);
+    }
+};
+
+// On mounted, check user role
+onMounted(async () => {
+    if (currentUser.value) {
+        const isUser = await hasRole(currentUser.value.uid, "user");
+        userRole.value = isUser ? "user" : null;
+    }
+});
 </script>
 
 <style scoped>
@@ -113,7 +165,13 @@ h3 {
     opacity: 0.6;
 }
 
-/* Button */
+/* Buttons */
+.buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
 button {
     align-self: flex-start;
     padding: 8px 18px;
@@ -129,5 +187,34 @@ button {
 button:hover {
     background: var(--accent);
     color: var(--bg-main);
+}
+
+
+/* Heart button specific */
+.heart-btn {
+    display: flex;
+    align-items: center;
+    margin-top: -2px;
+    gap: 6px;
+}
+
+.heart-btn span {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+.heart-btn.filled {
+    background: var(--accent);
+    color: var(--bg-main);
+}
+
+.heart-btn.interested {
+    background: var(--accent);
+    color: var(--bg-main);
+}
+
+.heart-btn span.filled {
+    color: red;
+    transform: scale(1.2);
 }
 </style>

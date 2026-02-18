@@ -48,11 +48,13 @@ npm install
 ### Start development server
 
 npm run dev
+
 The application will run locally on the development server.
 
 ### Compile and Minify for Production
 
 npm run build
+
 This command generates an optimized production-ready version of the application.
 
 ## Project Purpose

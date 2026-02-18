@@ -182,7 +182,7 @@ onMounted(async () => {
     // Remove from interested (NOTE: computed is read-only)
     // ----------------------------
     // This should update Firestore / your store instead of splicing computed.
-    // For now, keep it as a TODO hook.
+
     const removeFromInterested = async (eventId) => {
         if (!currentUser.value) return;
 

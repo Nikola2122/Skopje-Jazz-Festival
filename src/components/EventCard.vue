@@ -88,7 +88,7 @@ const toggleInterested = async () => {
             );
         }
 
-        // ✅ tell parent so it can refresh lists
+        // tell parent so it can refresh lists
         emit("interest-changed", { eventId: props.Event.id, action });
     } catch (err) {
         console.error("Failed to update interest:", err);

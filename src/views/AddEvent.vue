@@ -134,15 +134,33 @@ onMounted(() => {
     flatpickr(dateInput.value, {
         dateFormat: "d/m/Y",
         allowInput: true,
-        maxDate: "today",
+        minDate: "today",
         onChange: (_, dateStr) => {
             rawDate.value = dateStr
         }
     })
 })
+    function buildCategoriesStringFromSelectedArtists() {
+        const selectedNames = artists.value; // array of selected artist names
 
+        const selectedArtistObjects = artistStore.artists.filter(a =>
+            selectedNames.includes(a.Name)
+        );
+
+        // Each artist has Categories like: "Techno, House, EDM"
+        const parts = selectedArtistObjects.flatMap(a =>
+            (a.Categories ?? "")
+                .split(",")
+                .map(s => s.trim())
+                .filter(Boolean)
+        );
+
+        // unique + join back to one comma-separated string
+        return [...new Set(parts)].join(", ");
+    }
 const addEvent = async () => {
     try {
+        const categoriesStr = buildCategoriesStringFromSelectedArtists();
         await addToDb("Events", {
             Name: name.value,
             Date: rawDate.value,
@@ -150,7 +168,9 @@ const addEvent = async () => {
             ImageUrl: imageUrl.value,
             Location: location.value,
             TicketPrice: ticketPrice.value,
-            Artists: artists.value
+            Artists: artists.value,
+            categories: categoriesStr,
+            isNew: true
         })
         await eventStore.fetchEvents()
         await router.push({

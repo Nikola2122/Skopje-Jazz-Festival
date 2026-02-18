@@ -16,13 +16,11 @@
             <div v-if="interestedEvents.length">
                 <h3>Events You're Interested In</h3>
                 <div class="events-grid">
-                    <EventCard
-                        v-for="event in interestedEvents"
-                        :key="event.id"
-                        :Event="event"
-                        :class="{ conflict: dateConflict[event.DateKey] }"
-                        @uninterested="removeFromInterested(event.id)"
-                    />
+                    <EventCard v-for="event in interestedEvents"
+                               :key="event.id"
+                               :Event="event"
+                               :class="{ conflict: dateConflict[event.DateKey] }"
+                               @interest-changed="onInterestChanged" />
                 </div>
             </div>
 
@@ -44,7 +42,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { auth } from '@/firebase/firebase.js';
-import { hasRole } from '@/firebase/utils/services.js';
+import { alterInterested, hasRole } from '@/firebase/utils/services.js';
 import { useEventsStore } from '@/pinia/events.js';
 import EventCard from '@/components/EventCard.vue';
 import Loading from '@/components/Loading.vue';
@@ -186,10 +184,21 @@ onMounted(async () => {
     // This should update Firestore / your store instead of splicing computed.
     // For now, keep it as a TODO hook.
     const removeFromInterested = async (eventId) => {
-        // call your service that removes uid from the event's Interested array in Firestore
-        // then refresh:
-        // await eventsStore.fetchEvents();
-        console.warn("removeFromInterested TODO: update Firestore for", eventId);
+        if (!currentUser.value) return;
+
+        try {
+            await alterInterested(eventId, currentUser.value.uid, 'remove');
+            // refresh local list
+            await eventsStore.fetchEvents();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+    const onInterestChanged = async ({ eventId, action }) => {
+        // if user removed interest, refresh data so the event disappears from Interested section
+        if (action === "remove") {
+            await eventsStore.fetchEvents();
+        }
     };
 
 </script>

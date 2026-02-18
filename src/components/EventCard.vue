@@ -50,6 +50,7 @@ const props = defineProps({
         required: true
     }
 });
+const emit = defineEmits(["interest-changed"]);
 
 const showModal = ref(false);
 const fallbackImage =
@@ -74,15 +75,21 @@ const toggleInterested = async () => {
     if (!currentUser.value) return;
 
     const action = isInterested.value ? "remove" : "add";
+
     try {
         await alterInterested(props.Event.id, currentUser.value.uid, action);
 
+        // update local UI
         if (!props.Event.Interested) props.Event.Interested = [];
         if (action === "add") props.Event.Interested.push(currentUser.value.uid);
-        else
+        else {
             props.Event.Interested = props.Event.Interested.filter(
                 (uid) => uid !== currentUser.value.uid
             );
+        }
+
+        // ✅ tell parent so it can refresh lists
+        emit("interest-changed", { eventId: props.Event.id, action });
     } catch (err) {
         console.error("Failed to update interest:", err);
     }

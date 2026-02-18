@@ -84,7 +84,7 @@ router.beforeEach(async (to, from, next) => {
         }
     }
 
-    // Admin-only routes
+
     if (
         to.path === '/admin' ||
         to.path === '/add/artist' ||
@@ -95,14 +95,14 @@ router.beforeEach(async (to, from, next) => {
         return
     }
 
-    // User-only routes
+
     if(to.path === '/user/events') {
         if (user && !isAdmin) next()
         else next('/user/login')
         return
     }
 
-    // Login pages
+
     if (to.path === '/admin/login') {
         if (user && isAdmin) next('/admin')
         else next()

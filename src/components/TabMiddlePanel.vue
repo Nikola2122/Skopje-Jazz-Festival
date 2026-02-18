@@ -1,6 +1,6 @@
 <template>
     <section class="middle-panel">
-        <!-- Header -->
+
         <div class="panel-header">
             <div class="header-text">
                 <h1>Welcome to Your Dashboard</h1>
@@ -15,7 +15,7 @@
             </div>
         </div>
 
-        <!-- Tabs -->
+
         <div class="tabs">
             <button
                 :class="{ active: activeTab === 'artists' }"
@@ -31,7 +31,7 @@
             </button>
         </div>
 
-        <!-- Tab content -->
+
         <div class="tab-content">
             <ArtistsTab v-if="activeTab === 'artists'"/>
             <EventsTab v-if="activeTab === 'events'"/>
@@ -76,7 +76,7 @@ const goToAdd = () => {
     gap: 30px;
 }
 
-/* HEADER */
+
 .panel-header {
     display: flex;
     justify-content: space-between;
@@ -96,7 +96,7 @@ const goToAdd = () => {
     margin-top: 4px;
 }
 
-/* TABS */
+
 .tabs {
     display: flex;
     justify-content: center;
@@ -122,21 +122,21 @@ const goToAdd = () => {
     box-shadow: 0 6px 18px rgba(255, 200, 80, 0.3);
 }
 
-/* TAB CONTENT */
+
 .tab-content {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-/* HEADER ACTIONS */
+
 .header-actions {
     display: flex;
     align-items: center;
     gap: 14px;
 }
 
-/* ADD BUTTON */
+
 .add-btn {
     padding: 10px 18px;
     border-radius: 12px;

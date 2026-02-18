@@ -5,7 +5,7 @@
             <p>Explore the full schedule of performances and events</p>
         </header>
 
-        <!-- Category search -->
+
         <div class="filters" v-if="eventsStore.events.length !== 0">
             <input v-model="categoryQuery"
                    class="category-search"
@@ -18,16 +18,16 @@
 
         <Loading v-if="eventsStore.events.length === 0" />
 
-        <!-- If user is searching categories: show ONE filtered list -->
+
         <div v-else-if="isFiltering" class="events-grid">
             <EventCard v-for="event in filteredEvents"
                        :key="event.id"
                        :Event="event" />
         </div>
 
-        <!-- If NOT searching: show New + Old split (only if there are new ones) -->
+
         <div v-else>
-            <!-- NEW EVENTS SECTION (only if there are new events) -->
+
             <div v-if="newEvents.length > 0" class="section-block">
                 <h3 class="section-title">New events</h3>
                 <div class="events-grid">
@@ -37,7 +37,7 @@
                 </div>
             </div>
 
-            <!-- OLD EVENTS SECTION -->
+
             <div class="section-block" :class="{ 'mt': newEvents.length > 0 }">
                 <h3 v-if="newEvents.length > 0" class="section-title">All events</h3>
                 <div class="events-grid">
@@ -59,7 +59,7 @@
     const eventsStore = useEventsStore();
     const categoryQuery = ref("");
 
-    // --- helpers ---
+
     function normalizeToken(s) {
         return (s ?? "")
             .toString()
@@ -91,12 +91,12 @@
 
         return eventsStore.events.filter((ev) => {
             const haystack = normalizeToken(ev?.categories ?? "");
-            // each token must appear in categories (case-insensitive + hyphen/space tolerant)
+
             return wanted.every((w) => haystack.includes(w));
         });
     });
 
-    // When not filtering, we split into New + Old
+
     const newEvents = computed(() => {
         return eventsStore.events.filter((e) => e?.isNew === true);
     });
@@ -105,8 +105,7 @@
         return eventsStore.events.filter((e) => e?.isNew !== true);
     });
 
-    // If there are no new events, you said: “leave it as it is”
-    // That means: show the normal full list (oldEvents == all events in that case)
+
     const oldEventsToShow = computed(() => {
         return newEvents.value.length > 0 ? oldEvents.value : eventsStore.events;
     });
@@ -150,7 +149,7 @@
             margin: 0 auto;
         }
 
-    /* Filter UI */
+
     .filters {
         max-width: 560px;
         margin: 0 auto 30px auto;
@@ -190,14 +189,14 @@
         font-size: 18px;
     }
 
-    /* events grid */
+
     .events-grid {
         display: grid;
         gap: 26px;
         grid-template-columns: repeat(4, 1fr);
     }
 
-        /* subtle entrance animation */
+
         .events-grid > * {
             animation: fadeUp 0.4s ease forwards;
         }

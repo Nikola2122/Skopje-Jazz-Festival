@@ -4,7 +4,7 @@
         <p class="form-subtitle">Fill in all artist details</p>
 
         <form @submit.prevent="addArtist" class="artist-form">
-            <!-- Name -->
+
             <div class="form-group">
                 <label>Name</label>
                 <input v-model="name"
@@ -13,7 +13,7 @@
                        required />
             </div>
 
-            <!-- Birth Place -->
+
             <div class="form-group">
                 <label>Birth Place</label>
                 <input v-model="place"
@@ -22,7 +22,7 @@
                        required />
             </div>
 
-            <!-- Date of Birth -->
+
             <div class="form-group">
                 <label>Date of Birth</label>
                 <input ref="dateInput"
@@ -31,7 +31,7 @@
                        required />
             </div>
 
-            <!-- Role / Instrument -->
+
             <div class="form-group">
                 <label>Role / Instrument</label>
                 <input v-model="role"
@@ -47,7 +47,7 @@
                        required />
             </div>
 
-            <!-- Submit -->
+
             <button type="submit" class="submit-btn">
                 Add Artist
             </button>
@@ -112,7 +112,7 @@ const addArtist = async () => {
 </script>
 
 <style scoped>
-/* ================= CARD ================= */
+
 .artist-form-card {
     background: linear-gradient(
         145deg,
@@ -127,7 +127,7 @@ const addArtist = async () => {
     animation: fadeInUp 0.6s ease;
 }
 
-/* ================= HEADER ================= */
+
 .form-title {
     color: var(--accent);
     font-size: 24px;
@@ -140,7 +140,7 @@ const addArtist = async () => {
     margin-bottom: 26px;
 }
 
-/* ================= FORM ================= */
+
 .artist-form {
     display: flex;
     flex-direction: column;
@@ -160,7 +160,7 @@ const addArtist = async () => {
     color: var(--text-muted);
 }
 
-/* ================= INPUTS ================= */
+
 .form-group input {
     background: rgba(0, 0, 0, 0.35);
     border: 1px solid rgba(255, 200, 80, 0.35);
@@ -182,7 +182,6 @@ const addArtist = async () => {
     background: rgba(0, 0, 0, 0.45);
 }
 
-/* ================= DATE PREVIEW ================= */
 .date-preview {
     font-size: 12px;
     color: var(--text-muted);
@@ -190,7 +189,7 @@ const addArtist = async () => {
     animation: fadeIn 0.25s ease;
 }
 
-/* ================= BUTTON ================= */
+
 .submit-btn {
     margin-top: 10px;
     padding: 14px;
@@ -214,7 +213,6 @@ const addArtist = async () => {
     transform: translateY(0);
 }
 
-/* ================= FLATPICKR (MUST USE :deep) ================= */
 :deep(.flatpickr-calendar) {
     background: var(--bg-secondary);
     border-radius: 16px;
@@ -243,7 +241,7 @@ const addArtist = async () => {
     color: var(--accent);
 }
 
-/* ================= ANIMATIONS ================= */
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -255,9 +253,9 @@ const addArtist = async () => {
     }
 }
 .error-message {
-    background: rgba(255, 50, 50, 0.15); /* light red overlay */
-    color: #ff4d4d;                      /* bright red text */
-    border-left: 4px solid #ff4d4d;      /* accent left line */
+    background: rgba(255, 50, 50, 0.15);
+    color: #ff4d4d;
+    border-left: 4px solid #ff4d4d;
     padding: 10px 14px;
     border-radius: 12px;
     font-size: 14px;
@@ -267,7 +265,7 @@ const addArtist = async () => {
     box-shadow: 0 4px 12px rgba(255, 50, 50, 0.2);
 }
 
-/* Small fade+slide animation */
+
 @keyframes fadeInSlide {
     from {
         opacity: 0;

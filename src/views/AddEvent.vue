@@ -4,7 +4,7 @@
         <p class="form-subtitle">Fill in all event details</p>
 
         <form @submit.prevent="addEvent" class="artist-form">
-            <!-- Name -->
+
             <div class="form-group">
                 <label>Name</label>
                 <input
@@ -15,7 +15,7 @@
                 />
             </div>
 
-            <!-- Date -->
+
             <div class="form-group">
                 <label>Date</label>
                 <input
@@ -26,7 +26,7 @@
                 />
             </div>
 
-            <!-- Description -->
+
             <div class="form-group">
                 <label>Description</label>
                 <input
@@ -37,7 +37,7 @@
                 />
             </div>
 
-            <!-- Image URL -->
+
             <div class="form-group">
                 <label>Image URL</label>
                 <input
@@ -47,7 +47,7 @@
                 />
             </div>
 
-            <!-- Location -->
+
             <div class="form-group">
                 <label>Location</label>
                 <input
@@ -58,7 +58,7 @@
                 />
             </div>
 
-            <!-- Ticket Price -->
+
             <div class="form-group">
                 <label>Ticket Price</label>
                 <input
@@ -69,7 +69,7 @@
                 />
             </div>
 
-            <!-- Artists -->
+
             <div class="form-group">
                 <label>Artists</label>
 
@@ -90,7 +90,7 @@
                 </div>
             </div>
 
-            <!-- Submit -->
+
             <button type="submit" class="submit-btn">
                 Add Event
             </button>
@@ -141,13 +141,13 @@ onMounted(() => {
     })
 })
     function buildCategoriesStringFromSelectedArtists() {
-        const selectedNames = artists.value; // array of selected artist names
+        const selectedNames = artists.value;
 
         const selectedArtistObjects = artistStore.artists.filter(a =>
             selectedNames.includes(a.Name)
         );
 
-        // Each artist has Categories like: "Techno, House, EDM"
+
         const parts = selectedArtistObjects.flatMap(a =>
             (a.Categories ?? "")
                 .split(",")
@@ -155,7 +155,7 @@ onMounted(() => {
                 .filter(Boolean)
         );
 
-        // unique + join back to one comma-separated string
+
         return [...new Set(parts)].join(", ");
     }
 const addEvent = async () => {
@@ -185,7 +185,7 @@ const addEvent = async () => {
 </script>
 
 <style scoped>
-/* ================= CARD ================= */
+
 .artist-form-card {
     background: linear-gradient(
         145deg,
@@ -200,7 +200,6 @@ const addEvent = async () => {
     animation: fadeInUp 0.6s ease;
 }
 
-/* ================= HEADER ================= */
 .form-title {
     color: var(--accent);
     font-size: 24px;
@@ -213,7 +212,6 @@ const addEvent = async () => {
     margin-bottom: 26px;
 }
 
-/* ================= FORM ================= */
 .artist-form {
     display: flex;
     flex-direction: column;
@@ -233,7 +231,6 @@ const addEvent = async () => {
     color: var(--text-muted);
 }
 
-/* ================= INPUTS ================= */
 .form-group input {
     background: rgba(0, 0, 0, 0.35);
     border: 1px solid rgba(255, 200, 80, 0.35);
@@ -255,7 +252,6 @@ const addEvent = async () => {
     background: rgba(0, 0, 0, 0.45);
 }
 
-/* ================= CHECKBOX ================= */
 .checkbox-row {
     display: flex;
     align-items: center;
@@ -263,7 +259,7 @@ const addEvent = async () => {
     font-size: 14px;
     color: var(--text);
 }
-/* ================= DARK CHECKBOX ================= */
+
 .checkbox {
     display: flex;
     align-items: center;
@@ -274,14 +270,12 @@ const addEvent = async () => {
     color: var(--text);
 }
 
-/* Hide default checkbox */
 .checkbox input {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-/* Custom box */
 .checkmark {
     width: 18px;
     height: 18px;
@@ -295,7 +289,6 @@ const addEvent = async () => {
     box-shadow: inset 0 0 0 0 rgba(255, 200, 80, 0.4);
 }
 
-/* Check icon */
 .checkmark::after {
     content: "";
     width: 6px;
@@ -306,7 +299,6 @@ const addEvent = async () => {
     transition: transform 0.2s ease;
 }
 
-/* Checked state */
 .checkbox input:checked + .checkmark {
     background: var(--accent);
     border-color: var(--accent);
@@ -317,22 +309,18 @@ const addEvent = async () => {
     transform: rotate(45deg) scale(1);
 }
 
-/* Hover */
 .checkbox:hover .checkmark {
     border-color: var(--accent);
 }
 
-/* Label text */
 .checkbox-label {
     color: var(--text);
 }
 
-/* Optional subtle glow */
 .checkbox input:checked ~ .checkbox-label {
     color: var(--accent);
 }
 
-/* ================= BUTTON ================= */
 .submit-btn {
     margin-top: 10px;
     padding: 14px;
@@ -352,7 +340,6 @@ const addEvent = async () => {
     box-shadow: 0 10px 30px rgba(255, 200, 80, 0.45);
 }
 
-/* ================= ERROR ================= */
 .error-message {
     background: rgba(255, 50, 50, 0.15);
     color: #ff4d4d;
@@ -365,7 +352,6 @@ const addEvent = async () => {
     animation: fadeInSlide 0.3s ease forwards;
 }
 
-/* ================= FLATPICKR ================= */
 :deep(.flatpickr-calendar) {
     background: var(--bg-secondary);
     border-radius: 16px;
@@ -392,7 +378,6 @@ const addEvent = async () => {
     color: var(--accent);
 }
 
-/* ================= ANIMATIONS ================= */
 @keyframes fadeInUp {
     from {
         opacity: 0;

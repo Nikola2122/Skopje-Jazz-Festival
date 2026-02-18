@@ -20,7 +20,6 @@ export const useEventsStore = defineStore('events', () => {
                         const s = str.trim();
                         if (!s || s.toUpperCase() === 'TBA') return null;
 
-                        // dd/mm/yyyy
                         if (s.includes('/')) {
                             const [day, month, year] = s.split('/').map(Number);
                             if (!Number.isNaN(day) && !Number.isNaN(month) && !Number.isNaN(year)) {
@@ -28,7 +27,6 @@ export const useEventsStore = defineStore('events', () => {
                             }
                         }
 
-                        // dd-mm-yyyy OR yyyy-mm-dd
                         if (s.includes('-')) {
                             const raw = s.split('-');
                             const parts = raw.map(Number);

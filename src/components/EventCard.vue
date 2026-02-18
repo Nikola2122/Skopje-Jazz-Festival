@@ -1,6 +1,5 @@
 <template>
     <div class="card">
-        <!-- Image -->
         <div class="image-wrapper">
             <img :src="props.Event.ImageUrl || fallbackImage" alt="Event image" />
         </div>
@@ -18,7 +17,7 @@
         <div class="buttons">
             <button @click="showModal = true">View details</button>
 
-            <!-- Interested Heart Button -->
+
             <button
                 v-if="showInterestedBtn"
                 class="heart-btn"
@@ -59,18 +58,17 @@ const fallbackImage =
 const currentUser = ref(auth.currentUser);
 const userRole = ref(null);
 
-// Only show Interested button if logged in and role is 'user'
 const showInterestedBtn = computed(() => {
     return currentUser.value && userRole.value === "user";
 });
 
-// Check if current user's UID is in Event.Interested
+
 const isInterested = computed(() => {
     if (!props.Event.Interested || !currentUser.value) return false;
     return props.Event.Interested.includes(currentUser.value.uid);
 });
 
-// Toggle Interested
+
 const toggleInterested = async () => {
     if (!currentUser.value) return;
 
@@ -79,7 +77,7 @@ const toggleInterested = async () => {
     try {
         await alterInterested(props.Event.id, currentUser.value.uid, action);
 
-        // update local UI
+
         if (!props.Event.Interested) props.Event.Interested = [];
         if (action === "add") props.Event.Interested.push(currentUser.value.uid);
         else {
@@ -88,14 +86,14 @@ const toggleInterested = async () => {
             );
         }
 
-        // tell parent so it can refresh lists
+
         emit("interest-changed", { eventId: props.Event.id, action });
     } catch (err) {
         console.error("Failed to update interest:", err);
     }
 };
 
-// On mounted, check user role
+
 onMounted(async () => {
     if (currentUser.value) {
         const isUser = await hasRole(currentUser.value.uid, "user");
@@ -127,7 +125,7 @@ onMounted(async () => {
     box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
 }
 
-/* Image */
+
 .image-wrapper {
     width: 100%;
     height: 160px;
@@ -146,7 +144,7 @@ onMounted(async () => {
     transform: scale(1.06);
 }
 
-/* Content */
+
 .card-content {
     display: flex;
     flex-direction: column;
@@ -172,7 +170,7 @@ h3 {
     opacity: 0.6;
 }
 
-/* Buttons */
+
 .buttons {
     display: flex;
     gap: 12px;
@@ -197,7 +195,7 @@ button:hover {
 }
 
 
-/* Heart button specific */
+
 .heart-btn {
     display: flex;
     align-items: center;

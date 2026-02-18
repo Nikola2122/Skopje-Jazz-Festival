@@ -12,7 +12,7 @@
         <Loading v-if="!currentUser || loading || eventsStore.events.length === 0" />
 
         <div v-else>
-            <!-- Interested Events -->
+
             <div v-if="interestedEvents.length">
                 <h3>Events You're Interested In</h3>
                 <div class="events-grid">
@@ -24,7 +24,7 @@
                 </div>
             </div>
 
-            <!-- Suggested Events -->
+
             <div v-if="suggestedEvents.length" style="margin-top: 50px;">
                 <h3>Suggested Events</h3>
                 <div class="events-grid">
@@ -62,9 +62,7 @@ onMounted(async () => {
     });
 });
 
-    // ----------------------------
-    // Date parsing helper
-    // ----------------------------
+
     const parseEventDate = (str) => {
         if (!str || typeof str !== "string") return null;
         const s = str.trim();
@@ -79,14 +77,14 @@ onMounted(async () => {
             const raw = s.split("-");
             const parts = raw.map(Number);
             if (parts.length === 3) {
-                // yyyy-mm-dd
+
                 if (raw[0].length === 4) {
                     const [y, m, d] = parts;
                     if (!Number.isNaN(d) && !Number.isNaN(m) && !Number.isNaN(y)) {
                         return new Date(y, m - 1, d);
                     }
                 } else {
-                    // dd-mm-yyyy
+
                     const [d, m, y] = parts;
                     if (!Number.isNaN(d) && !Number.isNaN(m) && !Number.isNaN(y)) {
                         return new Date(y, m - 1, d);
@@ -99,9 +97,7 @@ onMounted(async () => {
         return Number.isNaN(d.getTime()) ? null : d;
     };
 
-    // ----------------------------
-    // Events with DateKey (no mutation)
-    // ----------------------------
+
     const eventsWithDateKey = computed(() => {
         return (eventsStore.events || []).map((e) => {
             const d = parseEventDate(e.Date);
@@ -110,9 +106,7 @@ onMounted(async () => {
         });
     });
 
-    // ----------------------------
-    // Interested events
-    // ----------------------------
+
     const interestedEvents = computed(() => {
         if (!currentUser.value || !canShow.value) return [];
         return eventsWithDateKey.value.filter((e) =>
@@ -120,11 +114,9 @@ onMounted(async () => {
         );
     });
 
-    // ----------------------------
-    // Helper: normalize categories -> array of tokens
-    // ----------------------------
+
     const splitCategories = (cats) => {
-        // your DB field is: categories (string like "Hip Hop, Rap")
+
         if (!cats) return [];
         if (Array.isArray(cats)) {
             return cats.map((c) => c.toString().trim().toLowerCase()).filter(Boolean);
@@ -136,13 +128,11 @@ onMounted(async () => {
             .filter(Boolean);
     };
 
-    // ----------------------------
-    // Suggested events based on categories overlap
-    // ----------------------------
+
     const suggestedEvents = computed(() => {
         if (!currentUser.value || !canShow.value) return [];
 
-        // categories from interested events
+
         const interestedCategorySet = new Set();
         for (const e of interestedEvents.value) {
             for (const c of splitCategories(e.categories || e.Categories)) {
@@ -150,22 +140,20 @@ onMounted(async () => {
             }
         }
 
-        // if user has no categories to base suggestions on -> return empty (or you can return all non-interested)
+
         if (interestedCategorySet.size === 0) return [];
 
         return eventsWithDateKey.value
-            // exclude events already interested
+
             .filter((e) => !e.Interested?.includes(currentUser.value.uid))
-            // keep only events that share at least 1 category
+
             .filter((e) => {
                 const eventCats = splitCategories(e.categories || e.Categories);
                 return eventCats.some((c) => interestedCategorySet.has(c));
             });
     });
 
-    // ----------------------------
-    // Date conflicts only for interested events
-    // ----------------------------
+
     const dateConflict = computed(() => {
         const counts = {};
         interestedEvents.value.forEach((e) => {
@@ -178,24 +166,21 @@ onMounted(async () => {
         return conflicts;
     });
 
-    // ----------------------------
-    // Remove from interested (NOTE: computed is read-only)
-    // ----------------------------
-    // This should update Firestore / your store instead of splicing computed.
+
 
     const removeFromInterested = async (eventId) => {
         if (!currentUser.value) return;
 
         try {
             await alterInterested(eventId, currentUser.value.uid, 'remove');
-            // refresh local list
+
             await eventsStore.fetchEvents();
         } catch (err) {
             console.error(err);
         }
     };
     const onInterestChanged = async ({ eventId, action }) => {
-        // if user removed interest, refresh data so the event disappears from Interested section
+
         if (action === "remove") {
             await eventsStore.fetchEvents();
         }
@@ -239,7 +224,7 @@ onMounted(async () => {
     animation: fadeUp 0.4s ease forwards;
 }
 
-/* highlight events on the same date (only interested events) */
+
 .conflict {
     border: 2px solid red;
     border-radius: 12px;

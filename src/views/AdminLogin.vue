@@ -10,7 +10,7 @@
                 <button type="submit">Login</button>
             </form>
 
-            <!-- error message -->
+
             <p v-if="error" style="color:red; margin-top:10px">{{ error }}</p>
         </div>
     </section>
@@ -155,7 +155,6 @@ const login = async () => {
     color: var(--accent);
 }
 
-/* reuse fadeUp animation */
 @keyframes fadeUp {
     from {
         opacity: 0;

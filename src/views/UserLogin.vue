@@ -13,10 +13,10 @@
                 <button type="submit">Login</button>
             </form>
 
-            <!-- error message -->
+
             <p v-if="error" class="error">{{ error }}</p>
 
-            <!-- signup link -->
+
             <div class="signup-link">
                 <span>Don’t have an account?</span>
                 <button class="secondary" @click="goToSignup">

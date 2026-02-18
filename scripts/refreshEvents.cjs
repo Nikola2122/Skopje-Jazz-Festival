@@ -1,17 +1,17 @@
-// scripts/refreshEvents.cjs
+
 const path = require("path");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const admin = require("firebase-admin");
 
-// --- Firebase Admin init (service account) ---
+
 const serviceAccountPath = path.join(__dirname, "serviceAccountKey.json");
 admin.initializeApp({
     credential: admin.credential.cert(require(serviceAccountPath)),
 });
 const db = admin.firestore();
 
-// -------- utilities --------
+
 function normalizeText(s) {
     return (s ?? "").toString().trim().replace(/\s+/g, " ");
 }
@@ -22,11 +22,11 @@ function kadevecerCityFromUrl(url) {
   const u = (url || "").toLowerCase();
   if (u.includes("-skopje")) return "Skopje";
   if (u.includes("-скопје")) return "Скопје";
-  return ""; // unknown / not skopje
+  return "";
 }
 
 function preferExisting(existing, incoming) {
-    // return the value we should write
+
     return isEmpty(existing) ? incoming : existing;
 }
 function slugify(s) {
@@ -68,8 +68,8 @@ async function createArtistIfMissing_Minimal(name, provider, sourceUrl) {
         await ref.set(
             {
                 Name: clean,
-                RoleInstrument: "",   // ✅ blank
-                Categories: "",       // ✅ blank
+                RoleInstrument: "",
+                Categories: "",
                 Provider: provider || "",
                 SourceUrl: sourceUrl || "",
                 CreatedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -121,9 +121,9 @@ function sleep(ms) {
 }
 
 async function fetchHtml(url, opts = {}) {
-    const timeout = opts.timeout ?? 60000;      // ✅ 60s default
-    const retries = opts.retries ?? 3;          // ✅ retry 3 times
-    const backoffMs = opts.backoffMs ?? 1500;   // ✅ base backoff
+    const timeout = opts.timeout ?? 60000;
+    const retries = opts.retries ?? 3;
+    const backoffMs = opts.backoffMs ?? 1500;
 
     let lastErr;
 
@@ -144,15 +144,13 @@ async function fetchHtml(url, opts = {}) {
             const status = err?.response?.status;
             const code = err?.code || "";
 
-            // If server is down (503) and it's not transient, don't waste retries
-            // (but still retry a little)
             const retryable =
                 code === "ECONNABORTED" || code === "ETIMEDOUT" ||
                 status === 429 || (status >= 500 && status <= 599);
 
             if (!retryable || attempt === retries) throw err;
 
-            // if server tells us when to retry
+
             const ra = err?.response?.headers?.["retry-after"];
             let wait = backoffMs * attempt + Math.floor(Math.random() * 500);
             if (ra) {
@@ -185,9 +183,9 @@ function absUrl(base, href) {
     return base.replace(/\/$/, "") + "/" + href;
 }
 
-// -------- Date helpers (same logic you had) --------
+
 function dateFromUrl(url) {
-    // matches dd-mm-yyyy in URL
+
     const m = (url || "").match(/(\d{2})-(\d{2})-(\d{4})/);
     if (!m) return "";
     const [, dd, mm, yyyy] = m;
@@ -197,7 +195,7 @@ function dateFromUrl(url) {
 function dateFromText(text) {
     const t = (text || "").replace(/\s+/g, " ");
 
-    // 08.02.2026
+
     let m = t.match(/\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b/);
     if (m) {
         const dd = m[1].padStart(2, "0");
@@ -206,7 +204,7 @@ function dateFromText(text) {
         return `${dd}-${mm}-${yyyy}`;
     }
 
-    // 2026-02-08
+
     m = t.match(/\b(\d{4})-(\d{2})-(\d{2})\b/);
     if (m) {
         const yyyy = m[1],
@@ -248,7 +246,7 @@ function dateFromJsonLd($) {
     return "";
 }
 
-// -------- Event object builder --------
+
 function toEventObject(partial, provider) {
     const Name = normalizeText(partial.Name) || "Untitled";
     const Date = normalizeText(partial.Date) || "";
@@ -265,7 +263,7 @@ function toEventObject(partial, provider) {
         Artists = guessArtistsFromTitle(Name);
     }
 
-    // event.categories should be a single string "A, B, C"
+
     const categories = normalizeText(partial.categories) || "";
 
     const ev = {
@@ -281,7 +279,7 @@ function toEventObject(partial, provider) {
 
     const BaseKey = buildBaseKey(ev);
 
-    // keep DedupeKey logic (date-sensitive if real date)
+
     const DedupeKey =
         ev.Date && ev.Date !== "TBA" ? `${BaseKey}__${slugify(ev.Date)}` : BaseKey;
 
@@ -295,7 +293,7 @@ function toEventObject(partial, provider) {
     };
 }
 
-// -------- Artists: scrape + upsert --------
+
 async function scrapeKadevecerArtists(maxPages = 7) {
     const base = "https://www.kadevecer.online";
 
@@ -303,13 +301,12 @@ async function scrapeKadevecerArtists(maxPages = 7) {
         const t = normalizeText(s || "");
         if (!t) return "";
 
-        // split by commas OR bullets OR pipes
         const parts = t
             .split(/,|•|\||\/|·/g)
             .map(x => normalizeText(x))
             .filter(Boolean);
 
-        // remove junk tokens
+
         const badWords = ["view", "review", "members", "youtube", "instagram", "facebook", "share"];
         const filtered = parts.filter(p => {
             const low = p.toLowerCase();
@@ -318,7 +315,7 @@ async function scrapeKadevecerArtists(maxPages = 7) {
             return true;
         });
 
-        // dedupe (case-insensitive)
+
         const seen = new Set();
         const uniq = [];
         for (const p of filtered) {
@@ -357,7 +354,7 @@ async function scrapeKadevecerArtists(maxPages = 7) {
                 console.log(
                     `[artists] page ${p} failed (${e?.code || e?.message || e}). Skipping pages -> will use sitemap.`
                 );
-                return []; // force sitemap fallback
+                return [];
             }
 
             const $ = cheerio.load(html);
@@ -391,7 +388,7 @@ async function scrapeKadevecerArtists(maxPages = 7) {
                 normalizeText(pickMeta($$, "og:title"));
             if (!name) continue;
 
-            // Keep newlines for fallback parsing
+
             const rawText = $$.text().replace(/\r/g, "");
             const pageText = rawText
                 .replace(/[ \t]+/g, " ")
@@ -400,12 +397,12 @@ async function scrapeKadevecerArtists(maxPages = 7) {
             let roleInstrument = "";
             let categories = "";
 
-            // Helper: find a short nearby line containing "•"
+
             function findHeaderRoleCats($$) {
                 const h1 = $$("h1").first();
                 if (!h1.length) return { role: "", cats: "" };
 
-                // Search within the nearest container (try a few levels)
+
                 const containers = [
                     h1.parent(),
                     h1.parent().parent(),
@@ -414,7 +411,7 @@ async function scrapeKadevecerArtists(maxPages = 7) {
                 ].filter(x => x && x.length);
 
                 for (const c of containers) {
-                    // Look for elements that likely hold the "Band • Pop" string
+
                     const candidates = c
                         .find("p, span, small, div, h2, h3")
                         .toArray()
@@ -431,7 +428,7 @@ async function scrapeKadevecerArtists(maxPages = 7) {
                 return { role: "", cats: "" };
             }
 
-            // clean categories string, supports multiple categories
+
             function cleanCategoriesString(s) {
                 const t = normalizeText(s || "");
                 if (!t) return "";
@@ -462,28 +459,27 @@ async function scrapeKadevecerArtists(maxPages = 7) {
                 return uniq.join(", ");
             }
 
-            // (A) Best: find "Band • Pop" somewhere near H1
+
             {
                 const { role, cats } = findHeaderRoleCats($$);
                 if (role) roleInstrument = role;
                 if (cats) categories = cleanCategoriesString(cats);
             }
 
-            // (B) Fallback role: from "Type:"
+
             if (!roleInstrument) {
                 const m = pageText.match(/\bType:\s*([^\n]+)\b/i);
                 if (m) roleInstrument = normalizeText(m[1]);
             }
 
-            // (C) Fallback categories: pick the first plausible line after Type that is NOT same as role
+
             if (!categories) {
                 const idx = pageText.toLowerCase().indexOf("type:");
                 if (idx !== -1) {
                     const after = pageText.slice(idx);
                     const lines = after.split("\n").map(l => normalizeText(l)).filter(Boolean);
 
-                    // lines[0] = "Type: Band"
-                    // scan next lines until we find something that doesn't equal role and isn't junk
+
                     const roleLower = (roleInstrument || "").toLowerCase();
                     for (let i = 1; i < Math.min(lines.length, 8); i++) {
                         const candidate = lines[i];
@@ -502,12 +498,12 @@ async function scrapeKadevecerArtists(maxPages = 7) {
                 }
             }
 
-            // Final safety: if categories equals role, blank it
+
             if (roleInstrument && categories && categories.toLowerCase() === roleInstrument.toLowerCase()) {
                 categories = "";
             }
 
-            // Image
+
             let imageUrl = pickMeta($$, "og:image") || "";
             if (imageUrl && imageUrl.startsWith("/")) imageUrl = base + imageUrl;
 
@@ -520,7 +516,7 @@ async function scrapeKadevecerArtists(maxPages = 7) {
                 SourceUrl: url,
             });
 
-            // small debug sample
+
             if (out.length <= 3) {
                 console.log("[artist parsed]", {
                     Name: name,
@@ -534,7 +530,7 @@ async function scrapeKadevecerArtists(maxPages = 7) {
         }
     }
 
-    // dedupe by name
+
     const byName = new Map();
     for (const a of out) {
         const key = slugify(a.Name);
@@ -580,7 +576,6 @@ async function upsertArtists(artists) {
     return { added, updated, checked: artists.length };
 }
 
-// -------- scrapers: events --------
 
 async function scrapeSkopjeIn() {
     const base = "https://www.skopje.in";
@@ -618,13 +613,13 @@ async function scrapeSkopjeIn() {
                 normalizeText($$("time").first().text()) ||
                 "";
 
-            // fallback 1: JSON-LD
+
             if (!date) date = dateFromJsonLd($$);
 
-            // fallback 2: URL
+
             if (!date) date = dateFromUrl(url);
 
-            // fallback 3: meta / page text
+
             if (!date) {
                 const metaDesc = pickMeta($$, "og:description");
                 date = dateFromText(metaDesc) || dateFromText($$.text());
@@ -672,7 +667,7 @@ async function scrapeKadevecer() {
             const name =
                 normalizeText($$("h1").first().text()) || pickMeta($$, "og:title");
 
-            // Ignore StandUp events
+
             if (isStandupTitle(name)) continue;
 
             const description =
@@ -684,7 +679,7 @@ async function scrapeKadevecer() {
                 normalizeText($$("time").first().text()) ||
                 "";
 
-            // keep previous fallbacks
+
             if (!date) date = dateFromJsonLd($$);
             if (!date) date = dateFromUrl(url);
             if (!date) {
@@ -749,7 +744,7 @@ async function scrapeMkTickets() {
             const description =
                 pickMeta($$, "og:description") || normalizeText($$("p").first().text());
 
-            // ImageUrl: ensure it's a URL (not "<img ...>")
+
             let imageUrl =
                 pickMeta($$, "og:image") ||
                 $$("img").first().attr("src") ||
@@ -767,7 +762,7 @@ async function scrapeMkTickets() {
                 normalizeText($$("time").first().text()) ||
                 "";
 
-            // keep previous fallbacks
+
             if (!date) date = dateFromJsonLd($$);
             if (!date) date = dateFromUrl(url);
             if (!date) {
@@ -834,7 +829,7 @@ async function deletePastEvents() {
             const parsed = isTBA ? null : parseDdMmYyyyToDate(raw);
 
             const shouldDelete =
-                isTBA || (parsed && parsed < today) || (!isTBA && !parsed); // also delete weird/unparseable
+                isTBA || (parsed && parsed < today) || (!isTBA && !parsed);
 
             if (shouldDelete) {
                 batch.delete(doc.ref);
@@ -855,9 +850,8 @@ async function deletePastEvents() {
 }
 
 
-// -------- Firestore insert/update: keep previous date upgrade logic + add categories + isNew flag --------
 async function addOnlyNewEvents(events) {
-    // Dedupe by BaseKey; keep richest version
+
     const byBase = new Map();
 
     for (const e of events) {
@@ -877,7 +871,7 @@ async function addOnlyNewEvents(events) {
 
     const deduped = Array.from(byBase.values()).map((x) => x.e);
 
-    // Artist categories cache
+
     const artistCache = new Map();
     async function getArtistCategories(artistName) {
         const key = artistDocId(artistName);
@@ -893,25 +887,18 @@ async function addOnlyNewEvents(events) {
     let updated = 0;
 
     for (const e of deduped) {
-        // --- RULES FOR ARTISTS ---
-        // 1) kadevecer / mktickets:
-        //    keep only artists that already exist in DB
-        // 2) skopje.in:
-        //    if missing, create minimal artist doc (blank RoleInstrument/Categories)
 
         let finalArtists = Array.isArray(e.Artists) ? e.Artists.map(normalizeText).filter(Boolean) : [];
 
         if (e.Provider === "skopje.in") {
-            // If missing -> create minimal record
+
             for (const aName of finalArtists) {
                 const exists = await artistExistsByName(aName);
                 if (!exists) {
                     await createArtistIfMissing_Minimal(aName, "skopje.in", e.SourceUrl);
                 }
             }
-            // keep the artist in the event (always, since we now ensure it exists)
         } else {
-            // kadevecer / mktickets / others: only keep artists that exist
             const keep = [];
             for (const aName of finalArtists) {
                 if (await artistExistsByName(aName)) keep.push(aName);
@@ -919,15 +906,13 @@ async function addOnlyNewEvents(events) {
             finalArtists = keep;
         }
 
-        // assign the filtered artists back to event object before saving
         e.Artists = finalArtists;
 
-        // --- Categories mapping (only if we have a saved artist with categories) ---
         let cats = "";
         for (const aName of e.Artists || []) {
             const c = await getArtistCategories(aName);
             if (c) {
-                cats = c;  // categories stored as one string already
+                cats = c;
                 break;
             }
         }
@@ -964,10 +949,9 @@ async function addOnlyNewEvents(events) {
             Location: preferExisting(existing.Location, e.Location),
             TicketPrice: preferExisting(existing.TicketPrice, e.TicketPrice),
 
-            // Artists: only fill if existing Artists empty
+
             Artists: (Array.isArray(existing.Artists) && existing.Artists.length) ? existing.Artists : e.Artists,
 
-            // categories: only fill if empty
             categories: preferExisting(existing.categories, e.categories),
 
             isNew: false,
@@ -995,7 +979,7 @@ async function safe(label, fn) {
         return [];
     }
 }
-// -------- main --------
+
 (async function main() {
     let artists = [];
     try {

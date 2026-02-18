@@ -81,7 +81,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-/* Overlay */
+
 .overlay {
     position: fixed;
     inset: 0;
@@ -92,7 +92,6 @@ onUnmounted(() => {
     z-index: 9999;
 }
 
-/* Modal */
 .modal {
     position: relative;
     background: var(--bg-secondary);
@@ -102,7 +101,7 @@ onUnmounted(() => {
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
-/* Close icon */
+
 .close-icon {
     position: absolute;
     top: 12px;
@@ -118,13 +117,11 @@ onUnmounted(() => {
     color: var(--accent);
 }
 
-/* Title */
 h2 {
     margin: 0 0 10px;
     color: var(--accent);
 }
 
-/* Info block */
 .info {
     font-size: 14px;
     color: var(--text-muted);
@@ -134,7 +131,6 @@ h2 {
     gap: 6px;
 }
 
-/* Ticket price */
 .ticket {
     margin-top: 6px;
     align-self: flex-start;
@@ -146,7 +142,7 @@ h2 {
     font-size: 13px;
 }
 
-/* Description */
+
 .demo-text {
     font-size: 14px;
     color: var(--text-main);
@@ -154,7 +150,7 @@ h2 {
     margin-bottom: 14px;
 }
 
-/* Artists */
+
 .label {
     font-size: 12px;
     color: var(--text-muted, #aaa);
@@ -180,7 +176,7 @@ h2 {
     font-size: 13px;
 }
 
-/* Close button */
+
 .close-btn {
     margin-top: 18px;
     width: 100%;
@@ -198,7 +194,7 @@ h2 {
     color: var(--bg-main);
 }
 
-/* Transitions */
+
 .modal-enter-active,
 .modal-leave-active {
     transition: all 0.25s ease;

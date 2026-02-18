@@ -11,10 +11,10 @@
                 <button type="submit">Sign Up</button>
             </form>
 
-            <!-- error message -->
+
             <p v-if="error" class="error">{{ error }}</p>
 
-            <!-- login link -->
+
             <div class="signup-link">
                 <span>Already have an account?</span>
                 <button class="secondary" @click="goToLogin">

@@ -64,91 +64,134 @@ onMounted(async () => {
     });
 });
 
-// ----------------------------
-// Date parsing and DateKey
-// ----------------------------
-const parseEventDate = (str) => {
-    if (!str) return null;
-    const s = str.trim();
-    if (s.includes('/')) {
-        const [d, m, y] = s.split('/').map(Number);
-        return new Date(y, m - 1, d);
-    } else if (s.includes('-')) {
-        const parts = s.split('-').map(Number);
-        if (parts[0] > 1000) return new Date(parts[0], parts[1] - 1, parts[2]);
-        return new Date(parts[2], parts[1] - 1, parts[0]);
-    } else {
+    // ----------------------------
+    // Date parsing helper
+    // ----------------------------
+    const parseEventDate = (str) => {
+        if (!str || typeof str !== "string") return null;
+        const s = str.trim();
+        if (!s || s.toUpperCase() === "TBA") return null;
+
+        if (s.includes("/")) {
+            const [d, m, y] = s.split("/").map(Number);
+            if (!Number.isNaN(d) && !Number.isNaN(m) && !Number.isNaN(y)) {
+                return new Date(y, m - 1, d);
+            }
+        } else if (s.includes("-")) {
+            const raw = s.split("-");
+            const parts = raw.map(Number);
+            if (parts.length === 3) {
+                // yyyy-mm-dd
+                if (raw[0].length === 4) {
+                    const [y, m, d] = parts;
+                    if (!Number.isNaN(d) && !Number.isNaN(m) && !Number.isNaN(y)) {
+                        return new Date(y, m - 1, d);
+                    }
+                } else {
+                    // dd-mm-yyyy
+                    const [d, m, y] = parts;
+                    if (!Number.isNaN(d) && !Number.isNaN(m) && !Number.isNaN(y)) {
+                        return new Date(y, m - 1, d);
+                    }
+                }
+            }
+        }
+
         const d = new Date(s);
         return Number.isNaN(d.getTime()) ? null : d;
-    }
-};
+    };
 
-// Add DateKey to all events
-eventsStore.events.forEach(e => {
-    const d = parseEventDate(e.Date);
-    e.DateKey = d ? d.toISOString().split('T')[0] : null;
-});
-
-// ----------------------------
-// Filter events
-// ----------------------------
-const interestedEvents = computed(() => {
-    if (!currentUser.value || !canShow.value) return [];
-    return eventsStore.events
-        .filter(e => e.Interested?.includes(currentUser.value.uid))
-});
-
-const suggestedEvents = computed(() => {
-    if (!currentUser.value || !canShow.value) return [];
-
-    // get the names of events the user is interested in
-    const interestedNames = new Set(
-        eventsStore.events
-            .filter(e => e.Interested?.includes(currentUser.value.uid))
-            .map(e => e.Name.toLowerCase())
-    );
-
-    console.log(interestedNames);
-
-    return eventsStore.events
-        // exclude events the user is already interested in
-        .filter(e => !e.Interested?.includes(currentUser.value.uid))
-        // filter for suggested events that contain any name from interested events
-        .filter(e => {
-            const eventName = e.Name.toLowerCase();
-            for (let name of interestedNames) {
-                for (let word of eventName.split(" ")){
-                    console.log(word)
-                    console.log(name)
-                    if (name.includes(word)) return true;
-                }
-
-            }
-            return false;
+    // ----------------------------
+    // Events with DateKey (no mutation)
+    // ----------------------------
+    const eventsWithDateKey = computed(() => {
+        return (eventsStore.events || []).map((e) => {
+            const d = parseEventDate(e.Date);
+            const DateKey = d ? d.toISOString().split("T")[0] : null;
+            return { ...e, DateKey };
         });
-});
-
-// ----------------------------
-// Date conflicts only for interested events
-// ----------------------------
-const dateConflict = computed(() => {
-    const counts = {};
-    interestedEvents.value.forEach(e => {
-        if (!e.DateKey) return;
-        counts[e.DateKey] = (counts[e.DateKey] || 0) + 1;
     });
-    const conflicts = {};
-    for (const k in counts) if (counts[k] > 1) conflicts[k] = true;
-    return conflicts;
-});
 
-// ----------------------------
-// Remove from interested
-// ----------------------------
-const removeFromInterested = (eventId) => {
-    const idx = interestedEvents.value.findIndex(e => e.id === eventId);
-    if (idx > -1) interestedEvents.value.splice(idx, 1);
-};
+    // ----------------------------
+    // Interested events
+    // ----------------------------
+    const interestedEvents = computed(() => {
+        if (!currentUser.value || !canShow.value) return [];
+        return eventsWithDateKey.value.filter((e) =>
+            e.Interested?.includes(currentUser.value.uid)
+        );
+    });
+
+    // ----------------------------
+    // Helper: normalize categories -> array of tokens
+    // ----------------------------
+    const splitCategories = (cats) => {
+        // your DB field is: categories (string like "Hip Hop, Rap")
+        if (!cats) return [];
+        if (Array.isArray(cats)) {
+            return cats.map((c) => c.toString().trim().toLowerCase()).filter(Boolean);
+        }
+        return cats
+            .toString()
+            .split(",")
+            .map((c) => c.trim().toLowerCase())
+            .filter(Boolean);
+    };
+
+    // ----------------------------
+    // Suggested events based on categories overlap
+    // ----------------------------
+    const suggestedEvents = computed(() => {
+        if (!currentUser.value || !canShow.value) return [];
+
+        // categories from interested events
+        const interestedCategorySet = new Set();
+        for (const e of interestedEvents.value) {
+            for (const c of splitCategories(e.categories || e.Categories)) {
+                interestedCategorySet.add(c);
+            }
+        }
+
+        // if user has no categories to base suggestions on -> return empty (or you can return all non-interested)
+        if (interestedCategorySet.size === 0) return [];
+
+        return eventsWithDateKey.value
+            // exclude events already interested
+            .filter((e) => !e.Interested?.includes(currentUser.value.uid))
+            // keep only events that share at least 1 category
+            .filter((e) => {
+                const eventCats = splitCategories(e.categories || e.Categories);
+                return eventCats.some((c) => interestedCategorySet.has(c));
+            });
+    });
+
+    // ----------------------------
+    // Date conflicts only for interested events
+    // ----------------------------
+    const dateConflict = computed(() => {
+        const counts = {};
+        interestedEvents.value.forEach((e) => {
+            if (!e.DateKey) return;
+            counts[e.DateKey] = (counts[e.DateKey] || 0) + 1;
+        });
+
+        const conflicts = {};
+        for (const k in counts) if (counts[k] > 1) conflicts[k] = true;
+        return conflicts;
+    });
+
+    // ----------------------------
+    // Remove from interested (NOTE: computed is read-only)
+    // ----------------------------
+    // This should update Firestore / your store instead of splicing computed.
+    // For now, keep it as a TODO hook.
+    const removeFromInterested = async (eventId) => {
+        // call your service that removes uid from the event's Interested array in Firestore
+        // then refresh:
+        // await eventsStore.fetchEvents();
+        console.warn("removeFromInterested TODO: update Firestore for", eventId);
+    };
+
 </script>
 
 <style scoped>

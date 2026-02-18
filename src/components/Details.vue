@@ -48,8 +48,14 @@ onUnmounted(() => {
                         <div class="ticket">
                             Ticket price: € {{ Event.TicketPrice }}
                         </div>
-                    </div>
 
+                    </div>
+                    <div class="demo-text">
+                        Categories: {{ Event.categories }}
+                    </div>
+                    <div class="demo-text">
+                        Source Url: {{ Event.SourceUrl }}
+                    </div>
                     <p class="demo-text">
                         {{ Event.Description }}
                     </p>
@@ -57,11 +63,9 @@ onUnmounted(() => {
                     <div class="grid-item artists">
                         <span class="label">Artists</span>
                         <span class="value">
-                            <span
-                                class="artist"
-                                v-for="(artist, index) in Event.Artists"
-                                :key="index"
-                            >
+                            <span class="artist"
+                                  v-for="(artist, index) in Event.Artists"
+                                  :key="index">
                                 {{ artist }}
                             </span>
                         </span>

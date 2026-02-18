@@ -7,45 +7,44 @@
             <!-- Name -->
             <div class="form-group">
                 <label>Name</label>
-                <input
-                    v-model="name"
-                    type="text"
-                    placeholder="Artist full name"
-                    required
-                />
+                <input v-model="name"
+                       type="text"
+                       placeholder="Artist full name"
+                       required />
             </div>
 
             <!-- Birth Place -->
             <div class="form-group">
                 <label>Birth Place</label>
-                <input
-                    v-model="place"
-                    type="text"
-                    placeholder="City, Country"
-                    required
-                />
+                <input v-model="place"
+                       type="text"
+                       placeholder="City, Country"
+                       required />
             </div>
 
             <!-- Date of Birth -->
             <div class="form-group">
                 <label>Date of Birth</label>
-                <input
-                    ref="dateInput"
-                    type="text"
-                    placeholder="dd/mm/yyyy"
-                    required
-                />
+                <input ref="dateInput"
+                       type="text"
+                       placeholder="dd/mm/yyyy"
+                       required />
             </div>
 
             <!-- Role / Instrument -->
             <div class="form-group">
                 <label>Role / Instrument</label>
-                <input
-                    v-model="role"
-                    type="text"
-                    placeholder="Singer, Guitarist, Drummer..."
-                    required
-                />
+                <input v-model="role"
+                       type="text"
+                       placeholder="Singer, Guitarist, Drummer..."
+                       required />
+            </div>
+            <div class="form-group">
+                <label>Categories</label>
+                <input v-model="Categories"
+                       type="text"
+                       placeholder="Hip Hop, Trap, Pop-Rock, Pop, Rcok"
+                       required />
             </div>
 
             <!-- Submit -->
@@ -72,6 +71,7 @@ const rawDate = ref("")
 const name = ref("")
 const place = ref("")
 const role = ref("")
+const Categories = ref("")
 const error = ref(false)
 const router = useRouter()
 const artistStore = useArtistsStore()
@@ -93,7 +93,8 @@ const addArtist = async () => {
             Name: name.value,
             BirthPlace: place.value,
             RoleInstrument: role.value,
-            DateOfBirth: rawDate.value
+            DateOfBirth: rawDate.value,
+            Categories: Categories.value
         })
         await artistStore.fetchArtists()
         await router.push({

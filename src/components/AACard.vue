@@ -19,6 +19,10 @@
                     <span class="label">Role / Instrument</span>
                     <span class="value">{{ artist.RoleInstrument }}</span>
                 </div>
+                <div class="grid-item Categories">
+                    <span class="label">Categories</span>
+                    <span class="value">{{ artist.Categories }}</span>
+                </div>
             </div>
         </div>
     </div>

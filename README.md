@@ -1,4 +1,4 @@
-# Skopje-Jazz-Festival – Music Events Platform
+# Skopje-Jazz-Festival Music Events Platform
 
 **Skopje-Jazz-Festival** is a web application that aggregates and displays **up-to-date music events in North Macedonia**, allowing users to discover concerts, track events they are interested in, and receive personalized recommendations.
 
